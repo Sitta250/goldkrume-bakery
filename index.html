@@ -191,27 +191,33 @@
   /* Reviews scroll */
   .reviews-track {
     display: flex;
+    align-items: center;
     gap: 1.5rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-top: 3rem;
+    padding-bottom: 5rem;
   }
   .reviews-track::-webkit-scrollbar { display: none; }
 
   .review-card {
     flex: 0 0 340px;
+    height: 230px;
     scroll-snap-align: start;
     background: #FFFAF2;
     border-radius: 4px;
     padding: 2rem;
     box-shadow: var(--shadow-md);
     transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s cubic-bezier(0.16,1,0.3,1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-bottom: 2rem;
   }
   .review-card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-14px);
+    box-shadow: var(--shadow-xl);
   }
 
   /* Cart drawer */
@@ -665,7 +671,7 @@
 </section>
 
 <!-- ===== REVIEWS ===== -->
-<section id="reviews" style="padding:6rem 0 10rem; background:linear-gradient(180deg, #F5EDD8 0%, #FAF0D8 55%, #FAF5EC 85%, #FAF5EC 100%); position:relative;">
+<section id="reviews" style="padding:6rem 0 6rem; background:linear-gradient(180deg, #F5EDD8 0%, #FAF0D8 55%, #FAF5EC 85%, #FAF5EC 100%); position:relative;">
 
   <div class="max-w-7xl mx-auto px-6">
     <div class="mb-10">
