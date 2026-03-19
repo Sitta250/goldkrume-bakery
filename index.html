@@ -1113,22 +1113,36 @@ function closeCart() {
   document.body.style.overflow = '';
 }
 
-// ===== Infinite review scroll =====
+// ===== Infinite auto-scroll reviews =====
 (function() {
   const track = document.getElementById('reviews-track');
   if (!track) return;
-  // Wait for layout so scrollWidth is correct
-  requestAnimationFrame(() => {
-    const half = track.scrollWidth / 2;
-    track.addEventListener('scroll', () => {
+
+  let paused = false;
+  let raf;
+
+  // Pause on hover or touch
+  track.addEventListener('mouseenter', () => { paused = true; });
+  track.addEventListener('mouseleave', () => { paused = false; });
+  track.addEventListener('touchstart',  () => { paused = true; },  { passive: true });
+  track.addEventListener('touchend',    () => { paused = false; }, { passive: true });
+
+  function step() {
+    if (!paused) {
+      track.scrollLeft += 0.6; // px per frame — tweak for speed
+      const half = track.scrollWidth / 2;
       if (track.scrollLeft >= half) {
-        // Jump back by exactly half — user won't notice
         track.scrollLeft -= half;
-      } else if (track.scrollLeft <= 0) {
-        // Allow scrolling left from start by jumping to matching clone position
-        track.scrollLeft += half;
       }
-    }, { passive: true });
+    }
+    raf = requestAnimationFrame(step);
+  }
+
+  // Start after layout is ready
+  requestAnimationFrame(() => {
+    // Seed mid-way so loop fires correctly from the start
+    track.scrollLeft = 0;
+    raf = requestAnimationFrame(step);
   });
 })();
 
