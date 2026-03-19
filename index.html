@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Goldkrume Bakery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream: '#FAF5EC',
+          brown: { DEFAULT: '#6B3F1F', light: '#8B5A35', dark: '#4A2C13' },
+          caramel: { DEFAULT: '#C47A2B', light: '#D4944A', dark: '#A3621F' },
+          sand: { DEFAULT: '#E8D5B0', light: '#F2E8D0', dark: '#CDB889' },
+          gold: { DEFAULT: '#D4A054', light: '#E0B870', dark: '#B8843A' },
+        },
+        fontFamily: {
+          display: ['"Playfair Display"', 'serif'],
+          body: ['Inter', 'sans-serif'],
+        },
+      }
+    }
+  }
+</script>
+<style>
+  :root {
+    --cream: #FAF5EC;
+    --brown: #6B3F1F;
+    --caramel: #C47A2B;
+    --sand: #E8D5B0;
+    --gold: #D4A054;
+    --shadow-sm: 0 2px 8px rgba(196,122,43,0.12);
+    --shadow-md: 0 4px 20px rgba(196,122,43,0.18), 0 1px 4px rgba(107,63,31,0.08);
+    --shadow-lg: 0 8px 40px rgba(196,122,43,0.22), 0 2px 8px rgba(107,63,31,0.12);
+    --shadow-xl: 0 16px 60px rgba(196,122,43,0.28), 0 4px 16px rgba(107,63,31,0.16);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--cream);
+    font-family: 'Inter', sans-serif;
+    color: var(--brown);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Playfair Display', serif;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  /* Navbar */
+  #navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    transition: background 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s cubic-bezier(0.16,1,0.3,1);
+    padding: 1.25rem 0;
+  }
+  #navbar.scrolled {
+    background: rgba(250,245,236,0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-sm);
+    padding: 0.75rem 0;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    background: var(--brown);
+    color: var(--cream);
+    padding: 0.75rem 1.75rem;
+    border-radius: 2px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.25s cubic-bezier(0.16,1,0.3,1), transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s cubic-bezier(0.16,1,0.3,1);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-primary:hover {
+    background: var(--brown-dark, #4A2C13);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:focus-visible { outline: 2px solid var(--caramel); outline-offset: 3px; }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--brown);
+    padding: 0.75rem 1.75rem;
+    border-radius: 2px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1.5px solid var(--brown);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.25s cubic-bezier(0.16,1,0.3,1), color 0.25s, transform 0.25s cubic-bezier(0.16,1,0.3,1);
+  }
+  .btn-outline:hover {
+    background: var(--brown);
+    color: var(--cream);
+    transform: translateY(-2px);
+  }
+  .btn-outline:active { transform: translateY(0); }
+  .btn-outline:focus-visible { outline: 2px solid var(--caramel); outline-offset: 3px; }
+
+  /* Hero */
+  .hero-img-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+  .hero-img-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(107,63,31,0.55) 0%, rgba(196,122,43,0.35) 60%, transparent 100%);
+    mix-blend-mode: multiply;
+  }
+
+  /* Product cards */
+  .product-card {
+    background: #fff8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s cubic-bezier(0.16,1,0.3,1);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+  }
+  .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-xl);
+  }
+  .product-card:focus-within { outline: 2px solid var(--caramel); outline-offset: 3px; }
+
+  .product-img-wrapper {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+  }
+  .product-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  .product-card:hover .product-img-wrapper img { transform: scale(1.06); }
+  .product-img-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(107,63,31,0.6) 0%, transparent 55%);
+  }
+
+  /* Reviews scroll */
+  .reviews-track {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  .reviews-track::-webkit-scrollbar { display: none; }
+
+  .review-card {
+    flex: 0 0 340px;
+    scroll-snap-align: start;
+    background: #FFFAF2;
+    border-radius: 4px;
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s cubic-bezier(0.16,1,0.3,1);
+  }
+  .review-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Cart drawer */
+  #cart-drawer {
+    position: fixed;
+    top: 0; right: 0;
+    height: 100vh;
+    width: min(420px, 100vw);
+    background: var(--cream);
+    z-index: 2000;
+    box-shadow: -8px 0 40px rgba(107,63,31,0.2);
+    transform: translateX(100%);
+    transition: transform 0.45s cubic-bezier(0.16,1,0.3,1);
+    display: flex;
+    flex-direction: column;
+  }
+  #cart-drawer.open { transform: translateX(0); }
+
+  #cart-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(107,63,31,0.35);
+    backdrop-filter: blur(4px);
+    z-index: 1999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  #cart-overlay.open { opacity: 1; pointer-events: all; }
+
+  /* Section divider */
+  .section-divider {
+    width: 48px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--caramel), var(--gold));
+    margin: 0 0 1.5rem 0;
+    border-radius: 2px;
+  }
+
+  /* Nav links */
+  .nav-link {
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--brown);
+    text-decoration: none;
+    position: relative;
+    transition: color 0.2s;
+    padding: 0.25rem 0;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0;
+    width: 0; height: 1.5px;
+    background: var(--caramel);
+    transition: width 0.3s cubic-bezier(0.16,1,0.3,1);
+  }
+  .nav-link:hover::after { width: 100%; }
+  .nav-link:hover { color: var(--caramel); }
+  .nav-link:focus-visible { outline: 2px solid var(--caramel); outline-offset: 3px; }
+
+  /* Info cards */
+  .info-card {
+    background: #fff8f0;
+    border-radius: 4px;
+    padding: 2rem 1.75rem;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s cubic-bezier(0.16,1,0.3,1);
+  }
+  .info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Fade-in animation */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up {
+    opacity: 0;
+    animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+  .fade-up-1 { animation-delay: 0.1s; }
+  .fade-up-2 { animation-delay: 0.2s; }
+  .fade-up-3 { animation-delay: 0.35s; }
+  .fade-up-4 { animation-delay: 0.5s; }
+
+  /* Lang toggle */
+  .lang-btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 0.35rem 0.75rem;
+    border-radius: 2px;
+    border: 1.5px solid var(--sand);
+    background: transparent;
+    color: var(--brown);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s cubic-bezier(0.16,1,0.3,1);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .lang-btn:hover {
+    background: var(--sand);
+    border-color: var(--caramel);
+    transform: translateY(-1px);
+  }
+  .lang-btn:focus-visible { outline: 2px solid var(--caramel); outline-offset: 2px; }
+
+  /* Cart item */
+  .cart-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--sand);
+  }
+
+  /* Qty controls */
+  .qty-btn {
+    width: 28px; height: 28px;
+    border-radius: 2px;
+    border: 1.5px solid var(--sand);
+    background: transparent;
+    color: var(--brown);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .qty-btn:hover { background: var(--sand); border-color: var(--caramel); transform: scale(1.1); }
+  .qty-btn:active { transform: scale(0.95); }
+  .qty-btn:focus-visible { outline: 2px solid var(--caramel); outline-offset: 2px; }
+
+  /* Trust badge */
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: rgba(250,245,236,0.9);
+    letter-spacing: 0.03em;
+  }
+
+  /* Map placeholder */
+  .map-block {
+    background: linear-gradient(135deg, var(--sand) 0%, #e0c99a 100%);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .map-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(196,122,43,0.04) 0px,
+      rgba(196,122,43,0.04) 1px,
+      transparent 1px,
+      transparent 24px
+    );
+  }
+
+  /* Scrollbar for reviews on desktop */
+  @media (min-width: 768px) {
+    .reviews-track { padding-bottom: 0; }
+  }
+
+  /* Footer */
+  footer { background: var(--brown); color: var(--sand); }
+
+  .social-icon {
+    width: 40px; height: 40px;
+    border-radius: 2px;
+    border: 1px solid rgba(232,213,176,0.3);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s cubic-bezier(0.16,1,0.3,1);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .social-icon:hover { background: var(--caramel); border-color: var(--caramel); transform: translateY(-3px); }
+  .social-icon:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  /* Add to cart button inside product */
+  .add-btn {
+    width: 100%;
+    background: var(--brown);
+    color: var(--cream);
+    border: none;
+    padding: 0.6rem 1rem;
+    margin-top: 1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.25s cubic-bezier(0.16,1,0.3,1), transform 0.2s cubic-bezier(0.16,1,0.3,1);
+    border-radius: 2px;
+    margin-top: 0.875rem;
+  }
+  .add-btn:hover { background: #4A2C13; transform: translateY(-1px); }
+  .add-btn:active { transform: translateY(0); }
+  .add-btn:focus-visible { outline: 2px solid var(--caramel); outline-offset: 2px; }
+  .add-btn.added { background: var(--caramel); }
+
+  /* Cart badge */
+  #cart-badge {
+    position: absolute;
+    top: -6px; right: -6px;
+    background: var(--caramel);
+    color: var(--cream);
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    transform: scale(0);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  #cart-badge.visible { transform: scale(1); }
+
+  /* Hero gradient bg */
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 60%, rgba(196,122,43,0.22) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(212,160,84,0.15) 0%, transparent 50%),
+      linear-gradient(160deg, #FAF5EC 0%, #F2E4C8 100%);
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav id="navbar">
+  <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="#" class="flex flex-col leading-none" style="text-decoration:none">
+      <span style="font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--brown); letter-spacing:-0.02em;">Goldkrume</span>
+      <span style="font-family:'Inter',sans-serif; font-size:0.65rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--caramel); margin-top:-2px;">Bakery</span>
+    </a>
+
+    <!-- Nav links (desktop) -->
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#products" class="nav-link" data-i18n="nav_menu">Speisekarte</a>
+      <a href="#about" class="nav-link" data-i18n="nav_about">Über uns</a>
+      <a href="#reviews" class="nav-link" data-i18n="nav_reviews">Bewertungen</a>
+      <a href="#location" class="nav-link" data-i18n="nav_location">Standort</a>
+      <a href="#contact" class="nav-link" data-i18n="nav_contact">Kontakt</a>
+    </div>
+
+    <!-- Right side: lang + cart -->
+    <div class="flex items-center gap-3">
+      <button class="lang-btn" id="lang-toggle" onclick="toggleLanguage()" aria-label="Sprache wechseln">
+        <img id="lang-flag" src="uk.png" alt="EN" width="20" height="13" style="border-radius:1px; object-fit:cover; display:block;">
+        <span id="lang-code">EN</span>
+      </button>
+
+      <!-- Cart button -->
+      <button onclick="openCart()" aria-label="Warenkorb öffnen" style="position:relative; background:none; border:none; cursor:pointer; padding:0.4rem; color:var(--brown); transition: transform 0.2s cubic-bezier(0.16,1,0.3,1);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span id="cart-badge">0</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="hero" style="min-height:100vh; position:relative; display:flex; align-items:center; overflow:hidden;">
+  <div class="hero-bg"></div>
+
+  <div class="max-w-7xl mx-auto px-6 py-32 relative z-10 w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <!-- Text -->
+      <div>
+        <p class="fade-up fade-up-1" style="font-size:0.8rem; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--caramel); margin-bottom:1rem;" data-i18n="hero_eyebrow">Handgemacht mit Liebe</p>
+        <h1 class="fade-up fade-up-2" style="font-size:clamp(3rem,6vw,5.5rem); font-weight:900; color:var(--brown); margin-bottom:0.5rem; line-height:1.05; letter-spacing:-0.03em;">Goldkrume<br><em style="font-style:italic; color:var(--caramel);">Bakery</em></h1>
+        <p class="fade-up fade-up-2" style="font-size:clamp(1.25rem,2.5vw,1.75rem); font-family:'Playfair Display',serif; color:var(--brown); margin-bottom:1.5rem; font-weight:400; letter-spacing:-0.01em;" data-i18n="hero_tagline">Frisch gebacken. Jeden Tag.</p>
+        <p class="fade-up fade-up-3" style="font-size:1rem; color:rgba(107,63,31,0.75); max-width:420px; margin-bottom:2.5rem;" data-i18n="hero_desc">Unsere Kekse entstehen nach traditionellen Rezepten mit nur den besten Zutaten — Butter aus Bayern, belgische Schokolade und frische Gewürze aus dem Marchfeld.</p>
+
+        <div class="fade-up fade-up-3 flex flex-wrap gap-3 mb-10">
+          <button class="btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})" data-i18n="hero_cta1">Jetzt bestellen</button>
+          <button class="btn-outline" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})" data-i18n="hero_cta2">Speisekarte ansehen</button>
+        </div>
+
+        <!-- Trust badges -->
+        <div class="fade-up fade-up-4 flex flex-wrap gap-4">
+          <div class="trust-badge" style="color:var(--brown);">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="currentColor" stroke-opacity="0.4"/><path d="M5 8l2 2 4-4" stroke="var(--caramel)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="badge1">Täglich frisch</span>
+          </div>
+          <div class="trust-badge" style="color:var(--brown);">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="currentColor" stroke-opacity="0.4"/><path d="M5 8l2 2 4-4" stroke="var(--caramel)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="badge2">Hausgemacht</span>
+          </div>
+          <div class="trust-badge" style="color:var(--brown);">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="currentColor" stroke-opacity="0.4"/><path d="M5 8l2 2 4-4" stroke="var(--caramel)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="badge3">Lokaler Favorit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero image -->
+      <div class="fade-up fade-up-3 hero-img-wrapper" style="box-shadow:var(--shadow-xl);">
+        <img src="https://placehold.co/720x600/C47A2B/FAF5EC?text=Goldkrume+Bakery" alt="Goldkrume Bakery" style="width:100%; display:block; aspect-ratio:6/5; object-fit:cover;">
+        <!-- Color treatment overlay -->
+        <div style="position:absolute; inset:0; background:linear-gradient(220deg, rgba(212,160,84,0.3) 0%, rgba(107,63,31,0.2) 100%); mix-blend-mode:color; pointer-events:none; z-index:1;"></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ===== KEY INFO CARDS ===== -->
+<section id="about" style="padding:6rem 0; background:var(--cream);">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-12">
+      <div class="section-divider"></div>
+      <h2 style="font-size:clamp(2rem,4vw,3rem); color:var(--brown);" data-i18n="about_heading">Was uns besonders macht</h2>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Card 1 -->
+      <div class="info-card">
+        <div style="width:48px; height:48px; background:linear-gradient(135deg,var(--sand),var(--gold)); border-radius:2px; display:flex; align-items:center; justify-content:center; margin-bottom:1.25rem; box-shadow:var(--shadow-sm);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 style="font-size:1.15rem; color:var(--brown); margin-bottom:0.6rem;" data-i18n="info1_title">Qualität first</h3>
+        <p style="font-size:0.9rem; color:rgba(107,63,31,0.7); line-height:1.6;" data-i18n="info1_text">Nur natürliche Zutaten, keine Konservierungsstoffe. Jeder Keks von Hand gerollt.</p>
+      </div>
+      <!-- Card 2 -->
+      <div class="info-card">
+        <div style="width:48px; height:48px; background:linear-gradient(135deg,var(--sand),var(--gold)); border-radius:2px; display:flex; align-items:center; justify-content:center; margin-bottom:1.25rem; box-shadow:var(--shadow-sm);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 110 20 10 10 0 010-20z"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <h3 style="font-size:1.15rem; color:var(--brown); margin-bottom:0.6rem;" data-i18n="info2_title">Frisch jeden Tag</h3>
+        <p style="font-size:0.9rem; color:rgba(107,63,31,0.7); line-height:1.6;" data-i18n="info2_text">Gebacken ab 5 Uhr morgens — damit Sie den ersten Bissen noch warm genießen können.</p>
+      </div>
+      <!-- Card 3 -->
+      <div class="info-card">
+        <div style="width:48px; height:48px; background:linear-gradient(135deg,var(--sand),var(--gold)); border-radius:2px; display:flex; align-items:center; justify-content:center; margin-bottom:1.25rem; box-shadow:var(--shadow-sm);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </div>
+        <h3 style="font-size:1.15rem; color:var(--brown); margin-bottom:0.6rem;" data-i18n="info3_title">Kundenliebling</h3>
+        <p style="font-size:0.9rem; color:rgba(107,63,31,0.7); line-height:1.6;" data-i18n="info3_text">Über 2.400 Bewertungen mit 4,9 Sternen — Wiens beliebteste Keksbäckerei seit 2018.</p>
+      </div>
+      <!-- Card 4 -->
+      <div class="info-card">
+        <div style="width:48px; height:48px; background:linear-gradient(135deg,var(--sand),var(--gold)); border-radius:2px; display:flex; align-items:center; justify-content:center; margin-bottom:1.25rem; box-shadow:var(--shadow-sm);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brown)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <h3 style="font-size:1.15rem; color:var(--brown); margin-bottom:0.6rem;" data-i18n="info4_title">Öffnungszeiten</h3>
+        <p style="font-size:0.9rem; color:rgba(107,63,31,0.7); line-height:1.6;" data-i18n="info4_text">Mo–Fr 7–19 Uhr · Sa 8–17 Uhr · So 9–14 Uhr</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRODUCTS ===== -->
+<section id="products" style="padding:6rem 0; background:linear-gradient(180deg,var(--cream) 0%,#F5EDD8 100%);">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-12">
+      <div class="section-divider"></div>
+      <h2 style="font-size:clamp(2rem,4vw,3rem); color:var(--brown);" data-i18n="products_heading">Unsere Highlights</h2>
+      <p style="font-size:1rem; color:rgba(107,63,31,0.65); margin-top:0.5rem;" data-i18n="products_sub">Täglich frisch, limitierte Stückzahl</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      <!-- Product 1 -->
+      <div class="product-card" tabindex="0">
+        <div class="product-img-wrapper">
+          <img src="https://placehold.co/400x300/8B5A35/FAF5EC?text=Choc+Chip" alt="Classic Choc Chip">
+        </div>
+        <div style="padding:1.25rem; display:flex; flex-direction:column; flex:1;">
+          <h3 style="font-size:1.1rem; color:var(--brown); margin-bottom:0.35rem;" data-i18n="p1_name">Classic Choc Chip</h3>
+          <p style="font-size:0.85rem; color:rgba(107,63,31,0.65); line-height:1.55; margin-bottom:0.75rem; flex:1;" data-i18n="p1_desc">Belgische Zartbitterschokolade, geröstete Haselnüsse, knuspriger Rand.</p>
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span style="font-family:'Playfair Display',serif; font-size:1.35rem; font-weight:700; color:var(--caramel);">€ 3,20</span>
+            <span style="font-size:0.75rem; color:rgba(107,63,31,0.5);" data-i18n="per_piece">pro Stück</span>
+          </div>
+          <button class="add-btn" onclick="addToCart(1,'Classic Choc Chip',3.20)" data-i18n="add_cart">In den Warenkorb</button>
+        </div>
+      </div>
+
+      <!-- Product 2 -->
+      <div class="product-card" tabindex="0">
+        <div class="product-img-wrapper">
+          <img src="https://placehold.co/400x300/C47A2B/FAF5EC?text=Salted+Caramel" alt="Salted Caramel">
+        </div>
+        <div style="padding:1.25rem; display:flex; flex-direction:column; flex:1;">
+          <h3 style="font-size:1.1rem; color:var(--brown); margin-bottom:0.35rem;" data-i18n="p2_name">Salted Caramel</h3>
+          <p style="font-size:0.85rem; color:rgba(107,63,31,0.65); line-height:1.55; margin-bottom:0.75rem; flex:1;" data-i18n="p2_desc">Cremiges Karamell, Fleur de Sel, butterweiches Inneres. Ein Klassiker.</p>
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span style="font-family:'Playfair Display',serif; font-size:1.35rem; font-weight:700; color:var(--caramel);">€ 3,50</span>
+            <span style="font-size:0.75rem; color:rgba(107,63,31,0.5);" data-i18n="per_piece">pro Stück</span>
+          </div>
+          <button class="add-btn" onclick="addToCart(2,'Salted Caramel',3.50)" data-i18n="add_cart">In den Warenkorb</button>
+        </div>
+      </div>
+
+      <!-- Product 3 -->
+      <div class="product-card" tabindex="0">
+        <div class="product-img-wrapper">
+          <img src="https://placehold.co/400x300/4A2C13/FAF5EC?text=Double+Fudge" alt="Double Fudge">
+        </div>
+        <div style="padding:1.25rem; display:flex; flex-direction:column; flex:1;">
+          <h3 style="font-size:1.1rem; color:var(--brown); margin-bottom:0.35rem;" data-i18n="p3_name">Double Fudge</h3>
+          <p style="font-size:0.85rem; color:rgba(107,63,31,0.65); line-height:1.55; margin-bottom:0.75rem; flex:1;" data-i18n="p3_desc">Intensiver Schokoladenteig, geschmolzener Fudge-Kern. Nichts für Schwache.</p>
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span style="font-family:'Playfair Display',serif; font-size:1.35rem; font-weight:700; color:var(--caramel);">€ 3,80</span>
+            <span style="font-size:0.75rem; color:rgba(107,63,31,0.5);" data-i18n="per_piece">pro Stück</span>
+          </div>
+          <button class="add-btn" onclick="addToCart(3,'Double Fudge',3.80)" data-i18n="add_cart">In den Warenkorb</button>
+        </div>
+      </div>
+
+      <!-- Product 4 -->
+      <div class="product-card" tabindex="0">
+        <div class="product-img-wrapper">
+          <img src="https://placehold.co/400x300/D4A054/6B3F1F?text=Hazelnut+Cream" alt="Hazelnut Cream">
+        </div>
+        <div style="padding:1.25rem; display:flex; flex-direction:column; flex:1;">
+          <h3 style="font-size:1.1rem; color:var(--brown); margin-bottom:0.35rem;" data-i18n="p4_name">Hazelnut Cream</h3>
+          <p style="font-size:0.85rem; color:rgba(107,63,31,0.65); line-height:1.55; margin-bottom:0.75rem; flex:1;" data-i18n="p4_desc">Piemonteser Haselnüsse, weiße Schokolade, zarte Vanillecreme. Pure Eleganz.</p>
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span style="font-family:'Playfair Display',serif; font-size:1.35rem; font-weight:700; color:var(--caramel);">€ 3,90</span>
+            <span style="font-size:0.75rem; color:rgba(107,63,31,0.5);" data-i18n="per_piece">pro Stück</span>
+          </div>
+          <button class="add-btn" onclick="addToCart(4,'Hazelnut Cream',3.90)" data-i18n="add_cart">In den Warenkorb</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== REVIEWS ===== -->
+<section id="reviews" style="padding:6rem 0 10rem; background:linear-gradient(180deg, #F5EDD8 0%, #FAF0D8 55%, #FAF5EC 85%, #FAF5EC 100%); position:relative;">
+
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-10">
+      <div class="section-divider"></div>
+      <h2 style="font-size:clamp(2rem,4vw,3rem); color:var(--brown);" data-i18n="reviews_heading">Was unsere Gäste sagen</h2>
+    </div>
+  </div>
+  <div class="reviews-track" id="reviews-track">
+
+      <!-- Set A -->
+      <div class="review-card">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+          <img src="https://placehold.co/48x48/E8D5B0/6B3F1F?text=SM" alt="SM" style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
+          <div><p style="font-weight:600; font-size:0.9rem; color:var(--brown);">Sophie M.</p><div style="display:flex; gap:2px;">⭐⭐⭐⭐⭐</div></div>
+        </div>
+        <p style="font-size:0.88rem; color:rgba(107,63,31,0.75); line-height:1.65;" data-i18n="rev1">"Der Salted Caramel-Keks ist ein Erlebnis für sich. Ich bestelle jeden Samstag eine ganze Box — meine Familie ist süchtig!"</p>
+      </div>
+      <div class="review-card">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+          <img src="https://placehold.co/48x48/C47A2B/FAF5EC?text=TK" alt="TK" style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
+          <div><p style="font-weight:600; font-size:0.9rem; color:var(--brown);">Thomas K.</p><div style="display:flex; gap:2px;">⭐⭐⭐⭐⭐</div></div>
+        </div>
+        <p style="font-size:0.88rem; color:rgba(107,63,31,0.75); line-height:1.65;" data-i18n="rev2">"Endlich eine Bäckerei, die Qualität über Quantität stellt. Frisch, warm, perfekt. Wie aus der Kindheit."</p>
+      </div>
+      <div class="review-card">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+          <img src="https://placehold.co/48x48/6B3F1F/E8D5B0?text=LB" alt="LB" style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
+          <div><p style="font-weight:600; font-size:0.9rem; color:var(--brown);">Laura B.</p><div style="display:flex; gap:2px;">⭐⭐⭐⭐⭐</div></div>
+        </div>
+        <p style="font-size:0.88rem; color:rgba(107,63,31,0.75); line-height:1.65;" data-i18n="rev3">"Der Double Fudge hat meinen Schokoladenstandard für immer verändert. Kein anderer Keks kommt noch ran."</p>
+      </div>
+      <div class="review-card">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+          <img src="https://placehold.co/48x48/D4A054/4A2C13?text=MR" alt="MR" style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
+          <div><p style="font-weight:600; font-size:0.9rem; color:var(--brown);">Markus R.</p><div style="display:flex; gap:2px;">⭐⭐⭐⭐⭐</div></div>
+        </div>
+        <p style="font-size:0.88rem; color:rgba(107,63,31,0.75); line-height:1.65;" data-i18n="rev4">"Ich habe Kekse aus ganz Europa probiert. Goldkrume steht ganz oben. Unglaubliche Textur, perfekte Süße."</p>
+      </div>
+      <div class="review-card">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+          <img src="https://placehold.co/48x48/8B5A35/FAF5EC?text=AW" alt="AW" style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
+          <div><p style="font-weight:600; font-size:0.9rem; color:var(--brown);">Anna W.</p><div style="display:flex; gap:2px;">⭐⭐⭐⭐⭐</div></div>
+        </div>
+        <p style="font-size:0.88rem; color:rgba(107,63,31,0.75); line-height:1.65;" data-i18n="rev5">"Das Team ist herzlich, die Atmosphäre einladend, und die Kekse sprechen für sich. Mein Lieblingsort in Wien."</p>
+      </div>
+      <div class="review-card">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+          <img src="https://placehold.co/48x48/FAF5EC/6B3F1F?text=FH" alt="FH" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:1px solid var(--sand);">
+          <div><p style="font-weight:600; font-size:0.9rem; color:var(--brown);">Felix H.</p><div style="display:flex; gap:2px;">⭐⭐⭐⭐⭐</div></div>
+        </div>
+        <p style="font-size:0.88rem; color:rgba(107,63,31,0.75); line-height:1.65;" data-i18n="rev6">"Bestelle ich für jedes Büro-Meeting. Die Kollegen sind begeistert, und ich bin der Held. Hazelnut Cream ist unschlagbar."</p>
+      </div>
+
+      <!-- Set B (duplicate for seamless loop) -->
+      <div class="review-card" aria-hidden="true">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+          <img src="https://placehold.co/48x48/E8D5B0/6B3F1F?text=SM" alt="" style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
+          <div><p style="font-weight:600; font-size:0.9rem; color:var(--brown);">Sophie M.</p><div style="display:flex; gap:2px;">⭐⭐⭐⭐⭐</div></div>
+        </div>
+        <p style="font-size:0.88rem; color:rgba(107,63,31,0.75); line-height:1.65;">"Der Salted Caramel-Keks ist ein Erlebnis für sich. Ich bestelle jeden Samstag eine ganze Box — meine Familie ist süchtig!"</p>
+      </div>
+      <div class="review-card" aria-hidden="true">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+          <img src="https://placehold.co/48x48/C47A2B/FAF5EC?text=TK" alt="" style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
+          <div><p style="font-weight:600; font-size:0.9rem; color:var(--brown);">Thomas K.</p><div style="display:flex; gap:2px;">⭐⭐⭐⭐⭐</div></div>
+        </div>
+        <p style="font-size:0.88rem; color:rgba(107,63,31,0.75); line-height:1.65;">"Endlich eine Bäckerei, die Qualität über Quantität stellt. Frisch, warm, perfekt. Wie aus der Kindheit."</p>
+      </div>
+      <div class="review-card" aria-hidden="true">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+          <img src="https://placehold.co/48x48/6B3F1F/E8D5B0?text=LB" alt="" style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
+          <div><p style="font-weight:600; font-size:0.9rem; color:var(--brown);">Laura B.</p><div style="display:flex; gap:2px;">⭐⭐⭐⭐⭐</div></div>
+        </div>
+        <p style="font-size:0.88rem; color:rgba(107,63,31,0.75); line-height:1.65;">"Der Double Fudge hat meinen Schokoladenstandard für immer verändert. Kein anderer Keks kommt noch ran."</p>
+      </div>
+      <div class="review-card" aria-hidden="true">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+          <img src="https://placehold.co/48x48/D4A054/4A2C13?text=MR" alt="" style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
+          <div><p style="font-weight:600; font-size:0.9rem; color:var(--brown);">Markus R.</p><div style="display:flex; gap:2px;">⭐⭐⭐⭐⭐</div></div>
+        </div>
+        <p style="font-size:0.88rem; color:rgba(107,63,31,0.75); line-height:1.65;">"Ich habe Kekse aus ganz Europa probiert. Goldkrume steht ganz oben. Unglaubliche Textur, perfekte Süße."</p>
+      </div>
+      <div class="review-card" aria-hidden="true">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+          <img src="https://placehold.co/48x48/8B5A35/FAF5EC?text=AW" alt="" style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
+          <div><p style="font-weight:600; font-size:0.9rem; color:var(--brown);">Anna W.</p><div style="display:flex; gap:2px;">⭐⭐⭐⭐⭐</div></div>
+        </div>
+        <p style="font-size:0.88rem; color:rgba(107,63,31,0.75); line-height:1.65;">"Das Team ist herzlich, die Atmosphäre einladend, und die Kekse sprechen für sich. Mein Lieblingsort in Wien."</p>
+      </div>
+      <div class="review-card" aria-hidden="true">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+          <img src="https://placehold.co/48x48/FAF5EC/6B3F1F?text=FH" alt="" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:1px solid var(--sand);">
+          <div><p style="font-weight:600; font-size:0.9rem; color:var(--brown);">Felix H.</p><div style="display:flex; gap:2px;">⭐⭐⭐⭐⭐</div></div>
+        </div>
+        <p style="font-size:0.88rem; color:rgba(107,63,31,0.75); line-height:1.65;">"Bestelle ich für jedes Büro-Meeting. Die Kollegen sind begeistert, und ich bin der Held. Hazelnut Cream ist unschlagbar."</p>
+      </div>
+
+  </div>
+
+  <!-- Bottom fade into location section -->
+  <div style="position:absolute; bottom:0; left:0; right:0; height:120px; background:linear-gradient(to bottom, transparent, #FAF5EC); pointer-events:none;"></div>
+</section>
+
+<!-- ===== LOCATION ===== -->
+<section id="location" style="padding:6rem 0; background:linear-gradient(180deg,#FAF5EC 0%,#F5EDD8 100%);">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-10">
+      <div class="section-divider"></div>
+      <h2 style="font-size:clamp(2rem,4vw,3rem); color:var(--brown);" data-i18n="location_heading">Besuchen Sie uns</h2>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+      <!-- Map block -->
+      <div class="map-block" style="box-shadow:var(--shadow-lg);">
+        <svg width="80" height="100" viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 4px 12px rgba(107,63,31,0.3));">
+          <path d="M40 0C20.1 0 4 16.1 4 36c0 26.4 36 64 36 64s36-37.6 36-64C76 16.1 59.9 0 40 0z" fill="var(--caramel)"/>
+          <circle cx="40" cy="36" r="14" fill="var(--cream)"/>
+          <circle cx="40" cy="36" r="7" fill="var(--brown)"/>
+        </svg>
+        <div style="position:absolute; bottom:1.5rem; left:50%; transform:translateX(-50%); text-align:center;">
+          <p style="font-size:0.75rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:rgba(107,63,31,0.5);" data-i18n="map_label">Karte folgt bald</p>
+        </div>
+      </div>
+
+      <!-- Store info -->
+      <div>
+        <div style="margin-bottom:2rem;">
+          <p style="font-size:0.75rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--caramel); margin-bottom:0.5rem;" data-i18n="location_address_label">Adresse</p>
+          <p style="font-size:1.1rem; font-weight:500; color:var(--brown);">Bäckerstraße 12<br>1010 Wien, Österreich</p>
+        </div>
+        <div style="margin-bottom:2rem;">
+          <p style="font-size:0.75rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--caramel); margin-bottom:0.5rem;" data-i18n="location_hours_label">Öffnungszeiten</p>
+          <div style="font-size:0.95rem; color:rgba(107,63,31,0.8); display:grid; grid-template-columns:1fr 1fr; gap:0.25rem 1.5rem;">
+            <span data-i18n="hours_mf">Mo – Fr</span><span>07:00 – 19:00</span>
+            <span data-i18n="hours_sa">Samstag</span><span>08:00 – 17:00</span>
+            <span data-i18n="hours_so">Sonntag</span><span>09:00 – 14:00</span>
+          </div>
+        </div>
+        <div style="margin-bottom:2rem;">
+          <p style="font-size:0.75rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--caramel); margin-bottom:0.5rem;" data-i18n="location_phone_label">Telefon</p>
+          <a href="tel:+431234567" style="font-size:1.05rem; color:var(--brown); text-decoration:none; font-weight:500; transition:color 0.2s;" onmouseover="this.style.color='var(--caramel)'" onmouseout="this.style.color='var(--brown)'">+43 1 234 567</a>
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=Bäckerstraße+12,+1010+Wien" target="_blank" rel="noopener" class="btn-primary" style="text-decoration:none; display:inline-flex;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+          <span data-i18n="directions_btn">Route berechnen</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact" style="padding:6rem 0; background:var(--brown);">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-12">
+      <div class="section-divider" style="background:linear-gradient(90deg,var(--gold),var(--caramel));"></div>
+      <h2 style="font-size:clamp(2rem,4vw,3rem); color:var(--cream);" data-i18n="contact_heading">Schreiben Sie uns</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <!-- Address + hours -->
+      <div>
+        <p style="font-size:0.75rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:0.75rem;" data-i18n="contact_find_us">Besuchen Sie uns</p>
+        <p style="color:rgba(232,213,176,0.85); font-size:0.95rem; line-height:1.7;">Bäckerstraße 12<br>1010 Wien<br>Österreich</p>
+      </div>
+      <!-- Contact -->
+      <div>
+        <p style="font-size:0.75rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:0.75rem;" data-i18n="contact_reach_us">Kontakt</p>
+        <div style="display:flex; flex-direction:column; gap:0.4rem;">
+          <a href="tel:+431234567" style="color:rgba(232,213,176,0.85); text-decoration:none; font-size:0.95rem; transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(232,213,176,0.85)'">+43 1 234 567</a>
+          <a href="mailto:hallo@goldkrume.at" style="color:rgba(232,213,176,0.85); text-decoration:none; font-size:0.95rem; transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(232,213,176,0.85)'">hallo@goldkrume.at</a>
+        </div>
+      </div>
+      <!-- Social -->
+      <div>
+        <p style="font-size:0.75rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:0.75rem;" data-i18n="contact_social">Social Media</p>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <!-- Instagram -->
+          <a href="#" class="social-icon" aria-label="Instagram" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <!-- Facebook -->
+          <a href="#" class="social-icon" aria-label="Facebook" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+          </a>
+          <!-- TikTok -->
+          <a href="#" class="social-icon" aria-label="TikTok" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--sand)"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.29 6.29 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.22 8.22 0 004.82 1.55V6.79a4.85 4.85 0 01-1.05-.1z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer style="padding:2rem 0; background:#4A2C13; border-top:1px solid rgba(232,213,176,0.12);">
+  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+    <p style="font-size:0.8rem; color:rgba(232,213,176,0.5);">© 2026 Goldkrume Bakery · <span data-i18n="footer_rights">Alle Rechte vorbehalten</span></p>
+    <div style="display:flex; gap:1.5rem; flex-wrap:wrap;">
+      <a href="#" style="font-size:0.8rem; color:rgba(232,213,176,0.5); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(232,213,176,0.5)'" data-i18n="footer_privacy">Datenschutz</a>
+      <a href="#" style="font-size:0.8rem; color:rgba(232,213,176,0.5); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(232,213,176,0.5)'" data-i18n="footer_imprint">Impressum</a>
+      <a href="#" style="font-size:0.8rem; color:rgba(232,213,176,0.5); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(232,213,176,0.5)'" data-i18n="footer_agb">AGB</a>
+    </div>
+    <p style="font-family:'Playfair Display',serif; font-size:0.9rem; font-style:italic; color:rgba(212,160,84,0.6);">"Für den besten Moment des Tages."</p>
+  </div>
+</footer>
+
+<!-- ===== CART OVERLAY ===== -->
+<div id="cart-overlay" onclick="closeCart()"></div>
+
+<!-- ===== CART DRAWER ===== -->
+<div id="cart-drawer" role="dialog" aria-modal="true" aria-label="Warenkorb">
+  <div style="padding:1.5rem; border-bottom:1px solid var(--sand); display:flex; align-items:center; justify-content:space-between;">
+    <h3 style="font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--brown);" data-i18n="cart_title">Warenkorb</h3>
+    <button onclick="closeCart()" style="background:none; border:none; cursor:pointer; padding:0.25rem; color:var(--brown); transition:transform 0.2s cubic-bezier(0.16,1,0.3,1);" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'" aria-label="Schließen">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <div id="cart-items" style="flex:1; overflow-y:auto; padding:1rem 1.5rem;">
+    <div id="cart-empty" style="text-align:center; padding:3rem 1rem;">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--sand)" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 1rem;"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <p style="color:rgba(107,63,31,0.45); font-size:0.9rem;" data-i18n="cart_empty">Ihr Warenkorb ist noch leer.</p>
+    </div>
+  </div>
+
+  <div id="cart-footer" style="padding:1.25rem 1.5rem; border-top:1px solid var(--sand); display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+      <span style="font-weight:600; font-size:0.95rem; color:var(--brown);" data-i18n="cart_total">Gesamt</span>
+      <span id="cart-total-price" style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; color:var(--caramel);">€ 0,00</span>
+    </div>
+    <button class="btn-primary" style="width:100%; justify-content:center;" data-i18n="cart_checkout">Zur Kasse</button>
+  </div>
+</div>
+
+<script>
+// ===== i18n =====
+const i18n = {
+  de: {
+    nav_menu: 'Speisekarte', nav_about: 'Über uns', nav_reviews: 'Bewertungen', nav_location: 'Standort', nav_contact: 'Kontakt',
+    hero_eyebrow: 'Handgemacht mit Liebe',
+    hero_tagline: 'Frisch gebacken. Jeden Tag.',
+    hero_desc: 'Unsere Kekse entstehen nach traditionellen Rezepten mit nur den besten Zutaten — Butter aus Bayern, belgische Schokolade und frische Gewürze aus dem Marchfeld.',
+    hero_cta1: 'Jetzt bestellen', hero_cta2: 'Speisekarte ansehen',
+    badge1: 'Täglich frisch', badge2: 'Hausgemacht', badge3: 'Lokaler Favorit',
+    about_heading: 'Was uns besonders macht',
+    info1_title: 'Qualität first', info1_text: 'Nur natürliche Zutaten, keine Konservierungsstoffe. Jeder Keks von Hand gerollt.',
+    info2_title: 'Frisch jeden Tag', info2_text: 'Gebacken ab 5 Uhr morgens — damit Sie den ersten Bissen noch warm genießen können.',
+    info3_title: 'Kundenliebling', info3_text: 'Über 2.400 Bewertungen mit 4,9 Sternen — Wiens beliebteste Keksbäckerei seit 2018.',
+    info4_title: 'Öffnungszeiten', info4_text: 'Mo–Fr 7–19 Uhr · Sa 8–17 Uhr · So 9–14 Uhr',
+    products_heading: 'Unsere Highlights', products_sub: 'Täglich frisch, limitierte Stückzahl',
+    p1_name: 'Classic Choc Chip', p1_desc: 'Belgische Zartbitterschokolade, geröstete Haselnüsse, knuspriger Rand.',
+    p2_name: 'Salted Caramel', p2_desc: 'Cremiges Karamell, Fleur de Sel, butterweiches Inneres. Ein Klassiker.',
+    p3_name: 'Double Fudge', p3_desc: 'Intensiver Schokoladenteig, geschmolzener Fudge-Kern. Nichts für Schwache.',
+    p4_name: 'Hazelnut Cream', p4_desc: 'Piemonteser Haselnüsse, weiße Schokolade, zarte Vanillecreme. Pure Eleganz.',
+    per_piece: 'pro Stück', add_cart: 'In den Warenkorb',
+    reviews_heading: 'Was unsere Gäste sagen',
+    rev1: '"Der Salted Caramel-Keks ist ein Erlebnis für sich. Ich bestelle jeden Samstag eine ganze Box — meine Familie ist süchtig!"',
+    rev2: '"Endlich eine Bäckerei, die Qualität über Quantität stellt. Frisch, warm, perfekt. Wie aus der Kindheit."',
+    rev3: '"Der Double Fudge hat meinen Schokoladenstandard für immer verändert. Kein anderer Keks kommt noch ran."',
+    rev4: '"Ich habe Kekse aus ganz Europa probiert. Goldkrume steht ganz oben. Unglaubliche Textur, perfekte Süße."',
+    rev5: '"Das Team ist herzlich, die Atmosphäre einladend, und die Kekse sprechen für sich. Mein Lieblingsort in Wien."',
+    rev6: '"Bestelle ich für jedes Büro-Meeting. Die Kollegen sind begeistert, und ich bin der Held. Hazelnut Cream ist unschlagbar."',
+    location_heading: 'Besuchen Sie uns', map_label: 'Karte folgt bald',
+    location_address_label: 'Adresse', location_hours_label: 'Öffnungszeiten', location_phone_label: 'Telefon',
+    hours_mf: 'Mo – Fr', hours_sa: 'Samstag', hours_so: 'Sonntag',
+    directions_btn: 'Route berechnen',
+    contact_heading: 'Schreiben Sie uns', contact_find_us: 'Besuchen Sie uns', contact_reach_us: 'Kontakt', contact_social: 'Social Media',
+    footer_rights: 'Alle Rechte vorbehalten', footer_privacy: 'Datenschutz', footer_imprint: 'Impressum', footer_agb: 'AGB',
+    cart_title: 'Warenkorb', cart_empty: 'Ihr Warenkorb ist noch leer.', cart_total: 'Gesamt', cart_checkout: 'Zur Kasse',
+  },
+  en: {
+    nav_menu: 'Menu', nav_about: 'About', nav_reviews: 'Reviews', nav_location: 'Location', nav_contact: 'Contact',
+    hero_eyebrow: 'Handcrafted with love',
+    hero_tagline: 'Freshly baked. Every day.',
+    hero_desc: 'Our cookies are made from traditional recipes using only the finest ingredients — Bavarian butter, Belgian chocolate, and fresh spices from the Marchfeld region.',
+    hero_cta1: 'Order now', hero_cta2: 'View menu',
+    badge1: 'Daily fresh', badge2: 'Homemade', badge3: 'Local favourite',
+    about_heading: 'What makes us special',
+    info1_title: 'Quality first', info1_text: 'Only natural ingredients, no preservatives. Every cookie hand-rolled.',
+    info2_title: 'Fresh every day', info2_text: 'Baked from 5 am — so you can enjoy the first bite while still warm.',
+    info3_title: 'Customer favourite', info3_text: 'Over 2,400 reviews with 4.9 stars — Vienna\'s favourite cookie bakery since 2018.',
+    info4_title: 'Opening hours', info4_text: 'Mon–Fri 7am–7pm · Sat 8am–5pm · Sun 9am–2pm',
+    products_heading: 'Our Highlights', products_sub: 'Daily fresh, limited quantity',
+    p1_name: 'Classic Choc Chip', p1_desc: 'Belgian dark chocolate, roasted hazelnuts, crispy edges.',
+    p2_name: 'Salted Caramel', p2_desc: 'Creamy caramel, Fleur de Sel, buttery soft interior. A classic.',
+    p3_name: 'Double Fudge', p3_desc: 'Intense chocolate dough, molten fudge centre. Not for the faint-hearted.',
+    p4_name: 'Hazelnut Cream', p4_desc: 'Piedmont hazelnuts, white chocolate, delicate vanilla cream. Pure elegance.',
+    per_piece: 'per piece', add_cart: 'Add to cart',
+    reviews_heading: 'What our guests say',
+    rev1: '"The Salted Caramel cookie is an experience in itself. I order a whole box every Saturday — my family is hooked!"',
+    rev2: '"Finally a bakery that puts quality over quantity. Fresh, warm, perfect. Like from childhood."',
+    rev3: '"The Double Fudge has permanently changed my chocolate standard. No other cookie comes close."',
+    rev4: '"I have tried cookies from all over Europe. Goldkrume is at the very top. Incredible texture, perfect sweetness."',
+    rev5: '"The team is warm, the atmosphere inviting, and the cookies speak for themselves. My favourite spot in Vienna."',
+    rev6: '"I order these for every office meeting. My colleagues are thrilled and I\'m the hero. Hazelnut Cream is unbeatable."',
+    location_heading: 'Visit us', map_label: 'Map coming soon',
+    location_address_label: 'Address', location_hours_label: 'Opening hours', location_phone_label: 'Phone',
+    hours_mf: 'Mon – Fri', hours_sa: 'Saturday', hours_so: 'Sunday',
+    directions_btn: 'Get directions',
+    contact_heading: 'Get in touch', contact_find_us: 'Visit us', contact_reach_us: 'Contact', contact_social: 'Social media',
+    footer_rights: 'All rights reserved', footer_privacy: 'Privacy', footer_imprint: 'Imprint', footer_agb: 'Terms',
+    cart_title: 'Cart', cart_empty: 'Your cart is empty.', cart_total: 'Total', cart_checkout: 'Checkout',
+  }
+};
+
+let currentLang = 'de';
+
+function toggleLanguage() {
+  currentLang = currentLang === 'de' ? 'en' : 'de';
+  const btn = document.getElementById('lang-toggle');
+  const flag = document.getElementById('lang-flag');
+  const code = document.getElementById('lang-code');
+  if (currentLang === 'en') {
+    flag.src = 'germany.png'; flag.alt = 'DE'; code.textContent = 'DE';
+  } else {
+    flag.src = 'uk.png'; flag.alt = 'EN'; code.textContent = 'EN';
+  }
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (i18n[currentLang][key] !== undefined) el.textContent = i18n[currentLang][key];
+  });
+  document.documentElement.lang = currentLang;
+  renderCart();
+}
+
+// ===== Navbar scroll =====
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  if (window.scrollY > 40) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+}, { passive: true });
+
+// ===== Cart state =====
+let cart = [];
+
+function addToCart(id, name, price) {
+  const existing = cart.find(i => i.id === id);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ id, name, price, qty: 1 });
+  }
+  updateBadge();
+  renderCart();
+  openCart();
+
+  // Animate button
+  const btns = document.querySelectorAll(`[onclick*="addToCart(${id},"]`);
+  btns.forEach(btn => {
+    btn.classList.add('added');
+    const orig = btn.dataset.i18n ? i18n[currentLang][btn.dataset.i18n] : btn.textContent;
+    btn.textContent = currentLang === 'de' ? '✓ Hinzugefügt' : '✓ Added';
+    setTimeout(() => {
+      btn.classList.remove('added');
+      btn.textContent = i18n[currentLang]['add_cart'];
+    }, 1800);
+  });
+}
+
+function updateQty(id, delta) {
+  const item = cart.find(i => i.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+  updateBadge();
+  renderCart();
+}
+
+function updateBadge() {
+  const total = cart.reduce((s, i) => s + i.qty, 0);
+  const badge = document.getElementById('cart-badge');
+  badge.textContent = total;
+  if (total > 0) badge.classList.add('visible');
+  else badge.classList.remove('visible');
+}
+
+function renderCart() {
+  const container = document.getElementById('cart-items');
+  const empty = document.getElementById('cart-empty');
+  const footer = document.getElementById('cart-footer');
+  const totalEl = document.getElementById('cart-total-price');
+
+  if (cart.length === 0) {
+    empty.style.display = 'block';
+    footer.style.display = 'none';
+    // Clear any existing items except the empty message
+    Array.from(container.children).forEach(c => { if (c.id !== 'cart-empty') c.remove(); });
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  footer.style.display = 'block';
+
+  // Clear old items
+  Array.from(container.children).forEach(c => { if (c.id !== 'cart-empty') c.remove(); });
+
+  let total = 0;
+  cart.forEach(item => {
+    total += item.price * item.qty;
+    const div = document.createElement('div');
+    div.className = 'cart-item';
+    div.innerHTML = `
+      <div style="width:52px; height:52px; border-radius:2px; overflow:hidden; flex-shrink:0; background:var(--sand);">
+        <img src="https://placehold.co/52x52/E8D5B0/6B3F1F?text=" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+      <div style="flex:1; min-width:0;">
+        <p style="font-weight:600; font-size:0.88rem; color:var(--brown); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</p>
+        <p style="font-size:0.8rem; color:rgba(107,63,31,0.55);">€ ${(item.price * item.qty).toFixed(2).replace('.',',')}</p>
+      </div>
+      <div style="display:flex; align-items:center; gap:0.4rem; flex-shrink:0;">
+        <button class="qty-btn" onclick="updateQty(${item.id},-1)" aria-label="Weniger">−</button>
+        <span style="font-weight:600; font-size:0.9rem; color:var(--brown); min-width:18px; text-align:center;">${item.qty}</span>
+        <button class="qty-btn" onclick="updateQty(${item.id},1)" aria-label="Mehr">+</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  totalEl.textContent = '€ ' + total.toFixed(2).replace('.', ',');
+}
+
+function openCart() {
+  document.getElementById('cart-drawer').classList.add('open');
+  document.getElementById('cart-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCart() {
+  document.getElementById('cart-drawer').classList.remove('open');
+  document.getElementById('cart-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ===== Infinite review scroll =====
+(function() {
+  const track = document.getElementById('reviews-track');
+  if (!track) return;
+  // Wait for layout so scrollWidth is correct
+  requestAnimationFrame(() => {
+    const half = track.scrollWidth / 2;
+    track.addEventListener('scroll', () => {
+      if (track.scrollLeft >= half) {
+        // Jump back by exactly half — user won't notice
+        track.scrollLeft -= half;
+      } else if (track.scrollLeft <= 0) {
+        // Allow scrolling left from start by jumping to matching clone position
+        track.scrollLeft += half;
+      }
+    }, { passive: true });
+  });
+})();
+
+// Close on Escape
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCart(); });
+</script>
+</body>
+</html>
